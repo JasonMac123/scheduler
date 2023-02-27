@@ -36,6 +36,10 @@ export default function Application(props) {
       interview: { ...interview }
     };
 
+    if (interview === null) {
+      appointment.interview = null;
+    }
+
     const appointments = {
       ...state.appointments,
       [id]: appointment
@@ -43,8 +47,13 @@ export default function Application(props) {
 
     const data = {...appointment}
 
+    if (appointment.interview === null) {
+      return axios.delete(`/api/appointments/${id}`)
+        .then(() => setState({...state, appointments}))
+        .catch((e) => console.log(e))
+    } 
     return axios.put(`/api/appointments/${id}`, data)
-      .then(() => setState(({...state, appointments})))
+      .then(() => setState({...state, appointments}))
       .catch((e) => console.log(e))
   }
 
