@@ -9,7 +9,7 @@ import Confirm from "./Confirm";
 import Error from "./Error";
 import useVisualMode from "hooks/useVisualMode";
 
-
+// list of components shown when mode is equal to component name
 const EMPTY = "EMPTY";
 const SHOW = "SHOW";
 const CREATE = "CREATE";
@@ -22,6 +22,7 @@ const ERROR_DELETE = "ERROR_DELETE"
 export default function Appointment(props) {
   const { mode, transition, back } = useVisualMode(props.interview ? SHOW : EMPTY);
 
+  // function that calls function to alter state and add data to api
   function save(name, interviewer) {
     const interview = {
       student: name,
@@ -33,13 +34,14 @@ export default function Appointment(props) {
       .catch((error) => transition(ERROR_SAVE, true));
   }
 
+  // function that deletes appointments through another function altering state
   function deleteAppointment() {
     transition(SAVING);
     props.cancelInterview(props.id)
       .then(() => transition(EMPTY))
       .catch((error) => transition(ERROR_DELETE, true));
   }
-
+    // different components shown when the mode of display is changed
   return (
     <article className="appointment">
       <Header time={props.time}/>

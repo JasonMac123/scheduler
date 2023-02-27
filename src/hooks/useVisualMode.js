@@ -4,6 +4,7 @@ const useVisualMode = (defaultTransition) => {
   const [display, setDisplay ] = useState(defaultTransition)
   const [history, setHistory] = useState([defaultTransition]);
 
+  // sets display state to new page
   const transition = (value, skip = false) => {
     setDisplay(value)
     if (skip) {
@@ -15,6 +16,7 @@ const useVisualMode = (defaultTransition) => {
     }
   }
 
+  // goes back if to the last page rendered properly
   const back = () => {
     if (history.length !== 1) {
       let newHistory = [...history]

@@ -11,6 +11,7 @@ const useApplicationData = () => {
 
   const setDay = day => setState({ ...state, day });
 
+  // Gets all scheduler api data on launch and sets it to state
   useEffect(() => {
     Promise.all([
       axios.get('/api/days'),
@@ -21,6 +22,32 @@ const useApplicationData = () => {
     })
   }, [])
 
+  // updates the spots of the current day after new appointment
+  function updateSpots(id, deletion = false) {
+    const appointmentObject = {...state.appointments}
+    const appointments = Object.values(appointmentObject);
+    let spots;
+
+    if (appointments[id - 1].interview === null) {
+      spots = -1
+    } else if (appointments[id - 1].interview !== null && deletion) {
+      spots = 1
+    } else {
+      spots = 0
+    }
+
+    const days = [...state.days]
+    for (const day of days) {
+      if (day.name === state.day) {
+        day.spots += spots
+      }
+    }
+    setState(prev => {
+      return {...prev, days}
+      })
+  }
+
+  // books interview or updates current interview using axios put request
   function bookInterview(id, interview) {
     const appointment = {
       ...state.appointments[id],
@@ -35,8 +62,10 @@ const useApplicationData = () => {
     const data = {...appointment}
     return axios.put(`/api/appointments/${id}`, data)
       .then(() => setState({...state, appointments}))
+      .then(() => updateSpots(id, false))
   }
 
+  // deletes the interview appointment
   function cancelInterview(id) {
     const appointment = {
       ...state.appointments[id],
@@ -50,9 +79,10 @@ const useApplicationData = () => {
 
     return axios.delete(`/api/appointments/${id}`)
       .then(() => setState({...state, appointments}))
+      .then(() => updateSpots(id, true))
   }
 
-
+  
   return {state, setDay, bookInterview, cancelInterview}
 }
 
