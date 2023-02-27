@@ -58,6 +58,10 @@ const useApplicationData = () => {
       ...state.appointments,
       [id]: appointment
     };
+    
+    if (appointment.interview.interviewer === null) {
+      return Promise.reject("interview cannot be empty")
+    }
 
     const data = {...appointment}
     return axios.put(`/api/appointments/${id}`, data)
