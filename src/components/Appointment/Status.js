@@ -10,7 +10,7 @@ export default function Status(props) {
         src="images/status.png"
         alt="Loading"
       />
-      <h1 className="text--semi-bold">{message}</h1>
+      <h1 className="text--semi-bold">{message ? message : "In progress"}</h1>
     </main>
   )
 }
