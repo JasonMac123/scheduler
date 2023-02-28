@@ -60,6 +60,8 @@ const useApplicationData = () => {
         [data.id]: appointment
       };
     
+      // gets a preview of the updated state without directly changing it
+      // to check how many spots are remaining
       const action = {type: SET_INTERVIEW, appointments}
       const nextStage = reducer(state, action);
 
@@ -85,34 +87,6 @@ const useApplicationData = () => {
     }
   }, [state])
 
-
-
-  // updates the spots of the current day after new appointment
-  function updateSpots(id, deletion, appointment) {
-
-    const appointments = {
-      ...state.appointments,
-      [id]: appointment
-    };
-    
-    const action = {type: SET_INTERVIEW, appointments}
-    const nextStage = reducer(state, action);
-
-    const days = nextStage.days.filter(item => item.name === state.day)[0]
-    const newAppointments = Object.values(nextStage.appointments)
-    const numberOfSpots = newAppointments.filter((item) => days.appointments.includes(item.id) && item.interview !== null)
-
-    const updatedDays = [...state.days].map((item) => {
-      if (item.name === state.day) {
-        item.spots = 5 - numberOfSpots.length
-        return item;
-      }
-      return item;
-    })
-
-    dispatch({type: SET_INT, days: updatedDays, appointments})
-  }
-
   // books interview or updates current interview using axios put request
   function bookInterview(id, interview) {
     const appointment = {
@@ -130,20 +104,12 @@ const useApplicationData = () => {
 
     const data = {...appointment}
     return axios.put(`/api/appointments/${id}`, data)
-      .then(() => updateSpots(id, false, appointment))
   }
 
   // deletes the interview appointment
   function cancelInterview(id) {
-    const appointment = {
-      ...state.appointments[id],
-      interview: null
-    };
-
     return axios.delete(`/api/appointments/${id}`)
-      .then(() => updateSpots(id, true, appointment))
   }
-
 
   return {state, setDay, bookInterview, cancelInterview}
 }
