@@ -59,14 +59,9 @@ const useApplicationData = () => {
         ...state.appointments,
         [data.id]: appointment
       };
-    
-      // gets a preview of the updated state without directly changing it
-      // to check how many spots are remaining
-      const action = {type: SET_INTERVIEW, appointments}
-      const nextStage = reducer(state, action);
 
-      const days = nextStage.days.filter(item => item.appointments.includes(data.id))[0]
-      const newAppointments = Object.values(nextStage.appointments)
+      const days = [...state.days].filter(item => item.appointments.includes(data.id))[0]
+      const newAppointments = Object.values(appointments)
       const numberOfSpots = newAppointments.filter((item) => days.appointments.includes(item.id) && item.interview !== null)
 
       const updatedDays = [...state.days].map((item) => {
