@@ -111,7 +111,6 @@ const useApplicationData = () => {
     return axios.delete(`/api/appointments/${id}`)
   }
 
-
   return {state, setDay, bookInterview, cancelInterview}
 }
 
