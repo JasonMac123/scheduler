@@ -4,7 +4,6 @@ import axios from "axios";
 const useApplicationData = () => {
   const SET_DAY = "SET_DAY";
   const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
-  const SET_INTERVIEW = "SET_INTERVIEW";
   const SET_SPOTS = "SET_SPOTS"
 
   // switch case to update state depending on the situtation
@@ -14,9 +13,6 @@ const useApplicationData = () => {
         return {...state, day: action.day}
       case SET_APPLICATION_DATA:
         return {...state, days: action.days, appointments: action.appointments, interviewers : action.interviewers}
-      case SET_INTERVIEW: {
-        return {...state, appointments: action.appointments}
-      }
       case SET_SPOTS: {
         return {...state, days: action.days, appointments: action.appointments}
       }
@@ -55,24 +51,14 @@ const useApplicationData = () => {
         ...state.appointments[data.id],
         interview: data.interview ? {...data.interview} : null
       };
+
       const appointments = {
-        ...state.appointments,
-        [data.id]: appointment
+      ...state.appointments,
+      [data.id]: appointment
       };
 
-      const days = [...state.days].filter(item => item.appointments.includes(data.id))[0]
-      const newAppointments = Object.values(appointments)
-      const numberOfSpots = newAppointments.filter((item) => days.appointments.includes(item.id) && item.interview !== null)
-
-      const updatedDays = [...state.days].map((item) => {
-        if (item.name === days.name) {
-          item.spots = 5 - numberOfSpots.length
-          return item;
-        }
-        return item;
-      })
-
-      dispatch({type: SET_SPOTS, days: updatedDays, appointments})
+      const result = updateSpots(state, appointment, data.id)
+      dispatch({type: SET_SPOTS, days: result, appointments})
     }
 
     return () => {
@@ -82,11 +68,37 @@ const useApplicationData = () => {
     }
   }, [state])
 
+  function updateSpots(state, appointment, id) {
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+
+    const days = [...state.days].filter(item => item.appointments.includes(id))[0]
+    const newAppointments = Object.values(appointments)
+    const numberOfSpots = newAppointments.filter((item) => days.appointments.includes(item.id) && item.interview !== null)
+
+    const updatedDays = [...state.days].map((item) => {
+      if (item.name === days.name) {
+        item.spots = 5 - numberOfSpots.length
+        return item;
+      }
+      return item;
+    })
+
+    return updatedDays
+  }
+
   // books interview or updates current interview using axios put request
   function bookInterview(id, interview) {
     const appointment = {
       ...state.appointments[id],
       interview: { ...interview }
+    };
+
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
     };
     
     /* rejects if interviewer is null as the server request will go through
@@ -99,11 +111,29 @@ const useApplicationData = () => {
 
     const data = {...appointment}
     return axios.put(`/api/appointments/${id}`, data)
+      .then(() => {
+        const result = updateSpots(state, appointment, id)
+        dispatch({type: SET_SPOTS, days: result, appointments})
+      })
   }
 
   // deletes the interview appointment
   function cancelInterview(id) {
+    const appointment = {
+      ...state.appointments[id],
+      interview: null
+    };
+
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+
     return axios.delete(`/api/appointments/${id}`)
+      .then(() => {
+        const result = updateSpots(state, appointment, id)
+        dispatch({type: SET_SPOTS, days: result, appointments})
+      })
   }
 
   return {state, setDay, bookInterview, cancelInterview}
