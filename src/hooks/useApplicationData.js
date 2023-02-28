@@ -5,6 +5,7 @@ const useApplicationData = () => {
   const SET_DAY = "SET_DAY";
   const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
   const SET_INTERVIEW = "SET_INTERVIEW";
+  const SET_SPOTS = "SET_SPOTS"
 
   // switch case to update state depending on the situtation
   function reducer(state, action) {
@@ -14,7 +15,10 @@ const useApplicationData = () => {
       case SET_APPLICATION_DATA:
         return {...state, days: action.days, appointments: action.appointments, interviewers : action.interviewers}
       case SET_INTERVIEW: {
-        return {...state, appointments: action.appointments, days: action.days}
+        return {...state, appointments: action.appointments}
+      }
+      case SET_SPOTS: {
+        return {...state, days: action.days, appointments: action.appointments}
       }
       default:
         throw new Error(
@@ -22,7 +26,6 @@ const useApplicationData = () => {
         );
     }
   };
-
   const [state, dispatch] = useReducer(reducer, {
     day: "Monday",
     days: [],
@@ -43,38 +46,52 @@ const useApplicationData = () => {
     })
   }, [])
 
-  // updates the spots of the current day after new appointment
-  function updateSpots(id, deletion, appointments) {
-    const appointmentObject = {...state.appointments}
-    let spots;
+  useEffect(() => {
+    const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL)
 
-    if (appointmentObject[id].interview === null) {
-      spots = -1
-    } else if (appointmentObject[id].interview !== null && deletion) {
-      spots = 1
-    } else {
-      spots = 0
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data)
+      const appointment = {
+        ...state.appointments[data.id],
+        interview: data.interview ? {...data.interview} : null
+      };
+      const appointments = {
+        ...state.appointments,
+        [data.id]: appointment
+      };
+    
+      // gets a preview of the updated state without directly changing it
+      // to check how many spots are remaining
+      const action = {type: SET_INTERVIEW, appointments}
+      const nextStage = reducer(state, action);
+
+      const days = nextStage.days.filter(item => item.appointments.includes(data.id))[0]
+      const newAppointments = Object.values(nextStage.appointments)
+      const numberOfSpots = newAppointments.filter((item) => days.appointments.includes(item.id) && item.interview !== null)
+
+      const updatedDays = [...state.days].map((item) => {
+        if (item.name === days.name) {
+          item.spots = 5 - numberOfSpots.length
+          return item;
+        }
+        return item;
+      })
+
+      dispatch({type: SET_SPOTS, days: updatedDays, appointments})
     }
 
-    const days = [...state.days].map((item) => {
-      if (item.name === state.day) {
-        item.spots += spots;
+    return () => {
+      if (socket.readyState === 1) {
+        socket.close()
       }
-      return item
-    })
-    dispatch({type: SET_INTERVIEW, days, appointments})
-  }
+    }
+  }, [state])
 
   // books interview or updates current interview using axios put request
   function bookInterview(id, interview) {
     const appointment = {
       ...state.appointments[id],
       interview: { ...interview }
-    };
-
-    const appointments = {
-      ...state.appointments,
-      [id]: appointment
     };
     
     /* rejects if interviewer is null as the server request will go through
@@ -87,26 +104,14 @@ const useApplicationData = () => {
 
     const data = {...appointment}
     return axios.put(`/api/appointments/${id}`, data)
-      .then(() => updateSpots(id, false, appointments))
   }
 
   // deletes the interview appointment
   function cancelInterview(id) {
-    const appointment = {
-      ...state.appointments[id],
-      interview: null
-    };
-
-    const appointments = {
-      ...state.appointments,
-      [id]: appointment
-    };
-
     return axios.delete(`/api/appointments/${id}`)
-      .then(() => updateSpots(id, true, appointments))
   }
 
-  
+
   return {state, setDay, bookInterview, cancelInterview}
 }
 
