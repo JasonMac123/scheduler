@@ -61,22 +61,21 @@ const useApplicationData = () => {
       };
     
       const action = {type: SET_INTERVIEW, appointments}
-      dispatch(action)
       const nextStage = reducer(state, action);
 
-      const days = nextStage.days.filter(item => item.appointments.includes(data.id))[0]
-      const newAppointments = Object.values(nextStage.appointments)
-      const numberOfSpots = newAppointments.filter((item) => days.appointments.includes(item.id) && item.interview !== null)
+      // const days = nextStage.days.filter(item => item.appointments.includes(data.id))[0]
+      // const newAppointments = Object.values(nextStage.appointments)
+      // const numberOfSpots = newAppointments.filter((item) => days.appointments.includes(item.id) && item.interview !== null)
 
-      const updatedDays = [...state.days].map((item) => {
-        if (item.name === days.name) {
-          item.spots = 5 - numberOfSpots.length
-          return item;
-        }
-        return item;
-      })
+      // const updatedDays = [...state.days].map((item) => {
+      //   if (item.name === days.name) {
+      //     item.spots = 5 - numberOfSpots.length
+      //     return item;
+      //   }
+      //   return item;
+      // })
 
-      dispatch({type: SET_SPOTS, days: updatedDays, appointments})
+      // dispatch({type: SET_SPOTS, days: updatedDays, appointments})
     }
 
     return () => {
@@ -97,7 +96,6 @@ const useApplicationData = () => {
     };
     
     const action = {type: SET_INTERVIEW, appointments}
-    dispatch(action)
     const nextStage = reducer(state, action);
 
     const days = nextStage.days.filter(item => item.name === state.day)[0]
@@ -112,7 +110,7 @@ const useApplicationData = () => {
       return item;
     })
 
-    dispatch({type: SET_SPOTS, days: updatedDays, appointments})
+    dispatch({type: SET_INT, days: updatedDays, appointments})
   }
 
   // books interview or updates current interview using axios put request
