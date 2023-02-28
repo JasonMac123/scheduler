@@ -76,11 +76,11 @@ const useApplicationData = () => {
 
     const days = [...state.days].filter(item => item.appointments.includes(id))[0]
     const newAppointments = Object.values(appointments)
-    const numberOfSpots = newAppointments.filter((item) => days.appointments.includes(item.id) && item.interview !== null)
+    const numberOfSpots = newAppointments.filter((item) => days.appointments.includes(item.id) && item.interview === null)
 
     const updatedDays = [...state.days].map((item) => {
       if (item.name === days.name) {
-        item.spots = 5 - numberOfSpots.length
+        item.spots = numberOfSpots.length
         return item;
       }
       return item;
