@@ -32,7 +32,7 @@ const useApplicationData = () => {
 
   useEffect(() => {
     const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL)
-
+    // server sends message to each client when an update to the appointments data occurs
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data)
       const appointment = {
@@ -44,7 +44,9 @@ const useApplicationData = () => {
       ...state.appointments,
       [data.id]: appointment
       };
-
+      /* updates all clients for a state change including the client that
+       * sent the api call
+       */
       const result = updateSpots(state, appointment, data.id)
       dispatch({type: SET_SPOTS, days: result, appointments})
     }
@@ -64,6 +66,7 @@ const useApplicationData = () => {
 
     const days = [...state.days].filter(item => item.appointments.includes(id))[0]
     const newAppointments = Object.values(appointments)
+    // filters for any appointments for targeted day that are null/empty
     const numberOfSpots = newAppointments.filter((item) => days.appointments.includes(item.id) && item.interview === null)
 
     const updatedDays = [...state.days].map((item) => {
@@ -73,7 +76,7 @@ const useApplicationData = () => {
       }
       return item;
     })
-
+    // returns new array of days array with the updated amount of spots
     return updatedDays
   }
 
