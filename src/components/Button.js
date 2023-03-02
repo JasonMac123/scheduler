@@ -9,4 +9,4 @@ export default function Button(props) {
    const classes = classNames('button ', {'button--danger': danger}, {'button--confirm': confirm})
 
   return <button onClick={onClick} className={classes} disabled={disabled}>{children}</button>;
-}
+};
