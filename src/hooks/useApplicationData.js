@@ -89,11 +89,6 @@ const useApplicationData = () => {
       [id]: appointment
     };
     
-    /* rejects if interviewer is null as the server request will go through
-     * even though the data is bad therefore if statement manually checks if
-     * a interviewer has been selected
-     */
-
     const data = {...appointment}
     return axios.put(`/api/appointments/${id}`, data)
       .then(() => {

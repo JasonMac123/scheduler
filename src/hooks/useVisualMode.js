@@ -7,6 +7,7 @@ const useVisualMode = (defaultTransition) => {
   // sets display state to new page
   const transition = (value, skip = false) => {
     setDisplay(value)
+    // replaces last page in history array if an error occurs
     if (skip) {
       let newHistory = [...history]
       newHistory.pop()
