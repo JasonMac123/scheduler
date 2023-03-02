@@ -9,6 +9,9 @@ export default function Form(props) {
   const [error, setError] = useState("");
   
   function validate() {
+  /* This function checks for inputs in the form component and displays error message
+   * if valid otherwise it will trigger state change and api call using axios
+   */
   if (student === "") {
     setError("Student name cannot be blank");
     return;
@@ -22,11 +25,13 @@ export default function Form(props) {
   }
 
   const reset = () => {
+    // clears Form
     setStudent("");
     setInterviewer(null);
   }
 
   const cancel = () => {
+    // 
     reset()
     onCancel()
   }

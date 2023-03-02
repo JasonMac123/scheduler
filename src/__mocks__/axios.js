@@ -1,3 +1,5 @@
+//fake data given to axios tests to make sure that functions work properly
+
 const fixtures = {
   days: [
     {

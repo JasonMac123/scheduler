@@ -21,7 +21,10 @@ const ERROR_DELETE = "ERROR_DELETE"
 
 export default function Appointment(props) {
   const { mode, transition, back } = useVisualMode(props.interview ? SHOW : EMPTY);
-
+  /* Changes the display for other clients using webSocket
+   * otherwise state change will occur, but components on display will not change since
+   * state responsible for changing display is not linked to appointment state
+   */ 
   useEffect(() => {
     if (props.interview && mode === EMPTY) {
       transition(SHOW);

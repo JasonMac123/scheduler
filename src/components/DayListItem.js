@@ -7,7 +7,7 @@ export default function DayListItem(props) {
   const { name, spots, setDay, selected } = props;
 
   const dayClass = classNames('day-list__item', {'day-list__item--selected': selected}, {'day-list__item--full': spots === 0})
-  
+  // changes the message depending on the spots in state passed from Application
   const formatSpots = function(spots) {
     if (spots > 1) {
       return `${spots} spots remaining`
