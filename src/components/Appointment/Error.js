@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function Error(props) {
-  const { message, onClose } = props
+  const { message, onClose } = props;
   // onClose triggers a state change for display and displays the last component
   return (
     <main className="appointment__card appointment__card--error">
@@ -16,5 +16,5 @@ export default function Error(props) {
         onClick={onClose}
       />
     </main>
-  )
-};
+  );
+}

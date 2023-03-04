@@ -1,5 +1,5 @@
-import React, {useEffect} from "react";
-import 'components/Appointment/styles.scss'
+import React, { useEffect } from "react";
+import "components/Appointment/styles.scss";
 import Header from "./Header";
 import Show from "./Show";
 import Empty from "./Empty";
@@ -20,11 +20,13 @@ const ERROR_SAVE = "ERROR_SAVE";
 const ERROR_DELETE = "ERROR_DELETE";
 
 export default function Appointment(props) {
-  const { mode, transition, back } = useVisualMode(props.interview ? SHOW : EMPTY);
+  const { mode, transition, back } = useVisualMode(
+    props.interview ? SHOW : EMPTY
+  );
   /* Changes the display for other clients using webSocket
    * otherwise state change will occur, but components on display will not change since
    * state responsible for changing display is not linked to appointment state
-   */ 
+   */
   useEffect(() => {
     if (props.interview && mode === EMPTY) {
       transition(SHOW);
@@ -38,10 +40,11 @@ export default function Appointment(props) {
   function save(name, interviewer) {
     const interview = {
       student: name,
-      interviewer
+      interviewer,
     };
     transition(SAVING);
-    props.bookInterview(props.id, interview)
+    props
+      .bookInterview(props.id, interview)
       .then(() => transition(SHOW))
       .catch((error) => transition(ERROR_SAVE, true));
   }
@@ -49,14 +52,15 @@ export default function Appointment(props) {
   // function that deletes appointments through another function altering state
   function deleteAppointment() {
     transition(SAVING);
-    props.cancelInterview(props.id)
+    props
+      .cancelInterview(props.id)
       .then(() => transition(EMPTY))
       .catch((error) => transition(ERROR_DELETE, true));
   }
-    // different components shown when the mode of display is changed
+  // different components shown when the mode of display is changed
   return (
     <article className="appointment" data-testid="appointment">
-      <Header time={props.time}/>
+      <Header time={props.time} />
       {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
       {mode === SHOW && props.interview && (
         <Show
@@ -66,12 +70,35 @@ export default function Appointment(props) {
           onEdit={() => transition(EDIT)}
         />
       )}
-      {mode === CREATE && <Form onCancel={() => back()} interviewers={props.interviewers} onSave={save}/>}
-      {mode === SAVING && <Status/>}
-      {mode === CONFIRM && <Confirm onCancel={() => transition(SHOW)} onConfirm={deleteAppointment}/>}
-      {mode === EDIT && <Form onCancel={() => back()} interviewers={props.interviewers} onSave={save} interviewer={props.interview.interviewer.id} student={props.interview.student}/> }
-      {mode === ERROR_SAVE && <Error message={"Could not save appointment"} onClose={() => back()} />}
-      {mode === ERROR_DELETE && <Error message={"Could not delete appointment"} onClose={() => back()} />}
+      {mode === CREATE && (
+        <Form
+          onCancel={() => back()}
+          interviewers={props.interviewers}
+          onSave={save}
+        />
+      )}
+      {mode === SAVING && <Status />}
+      {mode === CONFIRM && (
+        <Confirm
+          onCancel={() => transition(SHOW)}
+          onConfirm={deleteAppointment}
+        />
+      )}
+      {mode === EDIT && (
+        <Form
+          onCancel={() => back()}
+          interviewers={props.interviewers}
+          onSave={save}
+          interviewer={props.interview.interviewer.id}
+          student={props.interview.student}
+        />
+      )}
+      {mode === ERROR_SAVE && (
+        <Error message={"Could not save appointment"} onClose={back} />
+      )}
+      {mode === ERROR_DELETE && (
+        <Error message={"Could not delete appointment"} onClose={back} />
+      )}
     </article>
   );
-};
+}

@@ -12,7 +12,9 @@ export function getAppointmentsForDay(state, day) {
   const appointmentList = targetDay[0].appointments;
   const appointmentArray = Object.values(state.appointments);
   // returns a list of appointment with ids corresponding to the day
-  return appointmentArray.filter((interview) => appointmentList.includes(interview.id));
+  return appointmentArray.filter((interview) =>
+    appointmentList.includes(interview.id)
+  );
 }
 
 export function getInterview(state, interview) {
@@ -20,7 +22,7 @@ export function getInterview(state, interview) {
     return null;
   }
 
-  let obj = {student:interview.student};
+  let obj = { student: interview.student };
 
   const interviewerID = interview.interviewer;
   obj.interviewer = state.interviewers[interviewerID];
@@ -29,7 +31,7 @@ export function getInterview(state, interview) {
 }
 
 export function getInterviewersForDay(state, day) {
-    if (state.days.length === 0) {
+  if (state.days.length === 0) {
     return [];
   }
   const targetDay = state.days.filter((info) => info.name === day);
@@ -41,5 +43,7 @@ export function getInterviewersForDay(state, day) {
   const interviewerList = targetDay[0].interviewers;
   const interviewerArray = Object.values(state.interviewers);
   // repurposed function of getAppointments for day but for interviewers instead
-  return interviewerArray.filter((interviewer) => interviewerList.includes(interviewer.id));
+  return interviewerArray.filter((interviewer) =>
+    interviewerList.includes(interviewer.id)
+  );
 }
