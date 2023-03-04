@@ -1,20 +1,24 @@
 # Interview Scheduler
+
 A react app using express that can create appointments for people selecting interviews online. Users can check how many interviews are in a day, can edit or delete current interviews. Also the app comes with websockets, therefore people online can see realtime updates to the scheduler app.
 
 ## Screenshots
+
 ![Home Page](https://i.imgur.com/En1EvsM.png "Home Page")
 ![Creating an interview](https://i.imgur.com/b0Ad7b9.png "Creating an interview")
 ![Delete an interview](https://i.imgur.com/Xo6DUDI.png "Delete an interview")
 
-## Project Frameworks/Languages used
+## Project Frameworks/Dependencies
 
-This uses javascript, react, cypress, jest, storybook and axios
+This uses javascript, react, cypress, jest, storybook and axios. Dependencies include classNames, normalize.css, react-dom, react-scripts and dev dependencies include prop-types, react-test-renderer and sass.
 
 ## Setup
 
-Install dependencies with `npm install`.
-Make sure to clone the scheduler-api and start the api-server before you start the app
+Make sure to clone the scheduler-api
+https://github.com/JasonSnow123/scheduler-api
+Install the server following the README.md
 
+Install dependencies with `npm install`.
 
 ## Running Webpack Development Server
 
@@ -33,7 +37,6 @@ npm test
 ```sh
 npm run storybook
 ```
-
 
 ## Running Cypress End-to-End Testing
 
