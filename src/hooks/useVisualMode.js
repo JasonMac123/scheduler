@@ -12,6 +12,10 @@ const useVisualMode = (defaultTransition) => {
       setHistory((prev) => {
         let newHistory = [...prev];
         newHistory.pop();
+        let confirmationCheck = newHistory.pop();
+        if (confirmationCheck !== "CONFIRM") {
+          newHistory.push(confirmationCheck);
+        }
         return [...newHistory, value];
       });
     } else {
