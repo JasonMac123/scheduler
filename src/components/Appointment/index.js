@@ -51,7 +51,7 @@ export default function Appointment(props) {
 
   // function that deletes appointments through another function altering state
   function deleteAppointment() {
-    transition(SAVING);
+    transition(SAVING, true);
     props
       .cancelInterview(props.id)
       .then(() => transition(EMPTY))
